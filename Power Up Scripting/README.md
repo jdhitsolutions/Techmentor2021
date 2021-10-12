@@ -1,8 +1,14 @@
-# Power Up Your PowerShell Scripting
+# TMT02 Power Up Your PowerShell Scripting
+
+## Level: Intermediate to Advanced
 
 <img src=https://jdhitsolutions.com/blog/wp-content/uploads/2018/07/powershell-hero.jpg alt="PSHero" width=88 height=135>
 
-These are my demo and source files for my session I presented during the PowerShell+DevOps Global Summit in April 2021. :warning: All material is offered **AS-IS** and is for **educational purpose only**.
+So you can write a function and put it into a module. Or maybe you have a killer production script. What will take it to the next level or make it easier to use? How about adding auto completers, custom formatting, or type extensions? Don't know how? This is the session for you. This session is aimed at experienced PowerShell scripters ready to go to the next level. You will learn how to add auto-completers to your commands which go beyond validation sets. You will learn the role dynamic parameters might play in your code and how to create them. You will learn how to add custom type and format extensions and why you want to use them. These are things that might make your module even more powerful, or make your daily PowerShell work easier. You'll also see how easy it is to run your production scripts from anywhere!
+
+## Demos
+
+:warning: All material is offered **AS-IS** and is for **educational purpose only**.
 
 Some of the demonstrations used code from these modules.
 
