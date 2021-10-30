@@ -1,4 +1,5 @@
-﻿#will only get a credential parameter if computername contains Dom\d+
+﻿# Dynamically create the Credential parameter if computername matches the pattern Dom\d+
+# like Dom2
 
 # help about_Functions_Advanced_Parameters
 Function New-MySession {

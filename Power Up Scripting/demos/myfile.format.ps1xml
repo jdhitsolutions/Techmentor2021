@@ -1,15 +1,15 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
 <!--
-Format type data generated 03/23/2021 14:36:37 by COMPANY\ArtD
+Format type data generated 10/30/2021 16:39:51 by THINKP1\Jeff
 
 This file was created using the New-PSFormatXML command that is part
 of the PSScriptTools module.
+
 https://github.com/jdhitsolutions/PSScriptTools
 -->
 <Configuration>
   <ViewDefinitions>
     <View>
-      <!--Created 03/23/2021 14:36:37 by COMPANY\ArtD-->
+      <!--Created 10/30/2021 16:39:51 by THINKP1\Jeff-->
       <Name>Age</Name>
       <ViewSelectedBy>
         <TypeName>System.IO.FileInfo</TypeName>
@@ -27,8 +27,8 @@ https://github.com/jdhitsolutions/PSScriptTools
         <Label>Directory</Label>
       </GroupBy>
       <TableControl>
-        <!--Delete the AutoSize node if you want to use the defined widths.-->
-        <AutoSize />
+        <!--Delete the AutoSize node if you want to use the defined widths.
+        <AutoSize />-->
         <TableHeaders>
           <TableColumnHeader>
             <Label>Mode</Label>
@@ -37,22 +37,21 @@ https://github.com/jdhitsolutions/PSScriptTools
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>LastWriteTime</Label>
-            <Width>23</Width>
+            <Width>24</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>ModifiedAge</Label>
-            <Width>22</Width>
+            <Width>20</Width>
             <Alignment>left</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
             <Label>Size</Label>
-            <Width>7</Width>
-            <Alignment>left</Alignment>
+            <Width>10</Width>
+            <Alignment>right</Alignment>
           </TableColumnHeader>
           <TableColumnHeader>
-            <Label>Name</Label>
-            <Width>11</Width>
+            <Label>Name</Label>           
             <Alignment>left</Alignment>
           </TableColumnHeader>
         </TableHeaders>
@@ -73,7 +72,14 @@ https://github.com/jdhitsolutions/PSScriptTools
                 <PropertyName>ModifiedAge</PropertyName>
               </TableColumnItem>
               <TableColumnItem>
-                <PropertyName>Size</PropertyName>
+                <ScriptBlock>
+                    If (($host.name -match "console|code|serverremotehost") -And ($_.size -eq 0)) {
+                        "$([char]27)[91m$($_.size)$([char]27)[0m"
+                    }
+                    else {
+                        $_.size
+                    }
+                </ScriptBlock>
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Name</PropertyName>

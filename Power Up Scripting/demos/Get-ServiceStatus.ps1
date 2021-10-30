@@ -2,7 +2,12 @@
 
 Function Get-ServiceStatus {
     [cmdletbinding()]
-    Param([string]$Computername = $env:COMPUTERNAME)
+    Param(
+        [Parameter()]
+        [Alias("cn")]
+        [ValidateNotNullorEmpty()]
+        [string]$Computername = $env:COMPUTERNAME
+    )
 
     $p = @{
         Computername = $computername
@@ -11,14 +16,14 @@ Function Get-ServiceStatus {
 
     }
     Get-CimInstance @p
-}
+} #Get-ServiceStatus
 
 Register-ArgumentCompleter -CommandName Get-ServiceStatus -ParameterName Computername -ScriptBlock {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
 
-    Get-Content S:\company.txt | Where-Object {$_ -match "\w+"}  |
+    Get-Content c:\scripts\company.txt | Where-Object { $_ -match "\w+" } |
     ForEach-Object {
-                                                            # completion text,listitem text,result type,Tooltip
+                                                    # completion text,listitem text,result type,Tooltip
         [System.Management.Automation.CompletionResult]::new($_.Trim(), $_.Trim(), 'ParameterValue', $_)
     }
 }

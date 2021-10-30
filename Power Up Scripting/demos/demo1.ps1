@@ -1,11 +1,24 @@
-# https://github.com/jdhitsolutions/PSSummit2021
-
 Return "This is a demo script file."
-
-#region Custom Script Validation
 
 #make errors easier to see
 $host.PrivateData.ErrorForegroundColor = "yellow"
+
+#region parameter validation
+
+help About_Functions_Advanced_Parameters
+
+psedit .\Demo-ValidatePattern.ps1
+.\Demo-ValidatePattern.ps1 -Path c:\scripts
+.\demo-ValidatePattern -path "\\$($env:computername)\c$\scripts"
+
+psedit .\Demo-ValidateSet.ps1
+. .\Demo-ValidateSet.ps1
+help Export-Eventlog
+# show tab completion
+
+#endregion
+
+#region Custom Script Validation
 
 Function Get-FolderSize {
     [cmdletbinding()]
@@ -66,20 +79,20 @@ cls
 
 #https://github.com/jdhitsolutions/ADReportingTools
 
-psedit S:\ADReportingTools\functions\get-adcanonicaluser.ps1
+psedit c:\scripts\ADReportingTools\functions\get-adcanonicaluser.ps1
 Import-Module S:\ADReportingTools\ADReportingTools.psd1 -Force
 #test the command in the domain
 $PSDefaultParameterValues
 
-Get-ADCanonicalUser company\artd -server dom2 -verbose
-Get-ADCanonicalUser company\foo.bar -server dom2 -verbose
+Get-ADCanonicalUser company\artd -Server dom2 -Verbose
+Get-ADCanonicalUser company\foo.bar -Server dom2 -Verbose
 
 $PSDefaultParameterValues
 
 #depending on your work, splatting PSBoundparameters might be easier
 psedit S:\ADReportingTools\functions\get-adsummary.ps1
 
-Get-ADSummary -server dom2 -verbose
+Get-ADSummary -Server dom2 -Verbose
 Get-ADSummary -Server domFoo -Verbose
 
 cls
@@ -89,7 +102,7 @@ cls
 #region Auto Completion
 
 #via parameters. Can be more dynamic than ValidateSet and it allows the user to specify a value
-psedit S:\ADReportingTools\functions\get-adusercategory.ps1
+psedit c:\scripts\ADReportingTools\functions\get-adusercategory.ps1
 
 #demo in the console
 $ADUserReportingConfiguration
@@ -229,11 +242,34 @@ help Export-PSTypeExtension
 Get-ParameterInfo -Command Get-AdDomain | Select-Object Name, IsDynamic
 
 cls
+
+#create your own
+psedit .\New-DynamicParamCode.ps1
+#dot source in the editor and show the form
+
+cls
 #endregion
 
 #region Custom Type Extensions
 
-help Update-TypeData
+dir c:\scripts\*.ps1 | Measure-Object -Property Length -Sum -ov m
+$m | Get-Member
+
+help Upda aq awte-TypeData
+
+$splat = @{
+    TypeName   = "Microsoft.PowerShell.Commands.GenericMeasureInfo"
+    MemberType = "ScriptProperty"
+    MemberName = "SumKB"
+    Value      = { [math]::Round($this.sum / 1KB, 2) }
+    Force      = $True
+}
+Update-TypeData @splat
+
+dir C:\scripts -file | select Name, @{Name = "Size"; Expression = { $_.length } },
+@{Name = "ModifiedAge"; Expression = { New-TimeSpan -Start $_.lastwritetime -End (Get-Date) } } |
+sort ModifiedAge -Descending | select -Last 10
+
 #install from the PSGallery
 Import-Module PSTypeExtensionTools
 Get-Command -Module PSTypeExtensionTools
@@ -243,11 +279,11 @@ Add-PSTypeExtension -TypeName system.io.fileinfo -MemberType ScriptProperty -Mem
 
 Get-PSTypeExtension system.io.fileinfo
 
-dir c:\work -file | select Name, Size, ModifiedAge
+dir c:\scripts -file | sort ModifiedAge | select -First 25 -Property Name, Size, ModifiedAge
 
 # I incorporated into a module
-psedit S:\ADReportingTools\types\aduser.types.ps1xml
-Import-Module S:\ADReportingTools\ADReportingTools.psd1 -Force
+psedit c:\scripts\ADReportingTools\types\aduser.types.ps1xml
+Import-Module ADReportingTools -Force
 
 Get-ADUser artd | Get-PSType | Get-PSTypeExtension
 Get-ADUser -Filter "department -eq 'sales'" | select DN, Firstname, Lastname
@@ -264,6 +300,7 @@ cls
 # https://github.com/jdhitsolutions/PSScriptTools/blob/master/docs/New-PSFormatXML.md
 # Install-Module PSScriptTools
 
+Import-Module PSScriptTools
 #create a custom view
 $n = @{
     Properties = "Mode", "LastWriteTime", "ModifiedAge", "Size", "Name"
@@ -273,17 +310,22 @@ $n = @{
 }
 
 #need a single object
-Get-Item C:\work\Test.txt | New-PSFormatXML @n
+# I've already run this and tweaked the file
+#Get-Item .\demo1.ps1 | New-PSFormatXML @n
 
 psedit $n.path
+
 Update-FormatData $n.path
+
 dir c:\work -file | Format-Table -View age
+
+#run these demos in a console session to see ANSI formatting
 cls
 
 #create view for your module and custom objects
-dir S:\ADReportingTools\formats
+dir c:\scripts\ADReportingTools\formats
 #here is a default view
-psedit S:\ADReportingTools\formats\adsummary.format.ps1xml
+psedit c:\scripts\ADReportingTools\formats\adsummary.format.ps1xml
 
 Get-ADSummary
 
@@ -300,37 +342,5 @@ Get-ADDomainControllerHealth | Format-Table -View info
 cls
 #endregion
 
-#region Run Scripts from Anywhere
-
-# script links to External Scripts
-$env:path -split ";"
-
-# install-script winfetch
-
-#installing will update the path
-Get-Command winfetch | Format-List Name, Source, CommandType
-
-#this is a script but I can specify the name without the path!
-winfetch
-cls
-
-psedit .\CreateScriptLinks.ps1
-
-S:\CreateScriptLinks.ps1 -Path C:\scripts\GetExternalScripts.ps1
-
-Get-Command -CommandType ExternalScript
-
-GetExternalScripts
-
-#see the links
-dir "C:\Program Files\WindowsPowerShell\Scripts"
-
-#delete the link
-del "C:\Program Files\WindowsPowerShell\Scripts\GetExternalScripts.ps1"
-
-GetExternalScripts
-#but this still works
-C:\scripts\GetExternalScripts.ps1
-
-cls
-#endregion
+# What else do we have time to cover?
+# What else were you curious about?
