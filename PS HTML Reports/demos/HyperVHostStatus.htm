@@ -1,0 +1,99 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<Title>Hyper-V Host Status</Title>
+<style>
+body {
+    background-color: rgb(233, 223, 223);
+    font-family: Monospace;
+    font-size: 12pt;
+}
+
+td,th {
+    border: 0px solid black;
+    border-collapse: collapse;
+    white-space: pre;
+}
+
+th {
+    color: white;
+    background-color: black;
+}
+
+table,tr,td,th {
+    padding: 3px;
+    margin: 0px;
+    white-space: pre;
+}
+
+tr:nth-child(odd) {
+    background-color: lightgray
+}
+
+table {
+    margin-left: 25px;
+    width: 50%;
+}
+
+h2 {
+    font-family: Tahoma;
+}
+
+.footer {
+    color: green;
+    margin-left: 25px;
+    font-family: Tahoma
+    font-size: 7pt;
+    font-style: italic;
+}
+</style>
+</head><body>
+<H1>Hyper-V Host Status</H1>
+<H2 title = 'Microsoft Windows 11 Pro version 10.0.22000'>PROSPERO<H2>
+<H3>Memory</H3>
+<table>
+<tr><td>TotalMemoryGB:</td><td>64</td></tr>
+<tr><td>PctMemoryFree:</td><td>38.37</td></tr>
+<tr><td>TotalAssignedMemoryGB:</td><td>21.130859375</td></tr>
+<tr><td>TotalDemandMemoryGB:</td><td>16.41796875</td></tr>
+<tr><td>TotalPctDemand:</td><td>25.77</td></tr>
+</table>
+<H3>Processor</H3>
+<table>
+<tr><td>ProcessorCount:</td><td>1</td></tr>
+<tr><td>LogicalProcessorCount:</td><td>20</td></tr>
+<tr><td>PctProcessorTime:</td><td>1.6917301210213</td></tr>
+<tr><td>LogicalProcPctGuestRuntime:</td><td>4.41102392004258</td></tr>
+<tr><td>LogicalProcPctHypervisorRuntime:</td><td>0.584507854363971</td></tr>
+</table>
+<H3>Virtual Machines</H3>
+<table>
+<tr><td>TotalVMs:</td><td>9</td></tr>
+<tr><td>RunningVMs:</td><td>7</td></tr>
+<tr><td>OffVMs:</td><td>2</td></tr>
+<tr><td>SavedVMs:</td><td>0</td></tr>
+<tr><td>PausedVMs:</td><td>0</td></tr>
+<tr><td>OtherVMs:</td><td>0</td></tr>
+</table>
+<H3>Virtual Machine Health</H3>
+<table>
+<colgroup><col/><col/></colgroup>
+<tr><th>Critical</th><th>Healthy</th></tr>
+<tr><td>0</td><td>9</td></tr>
+</table>
+<H3>Networking</H3>
+<table>
+<colgroup><col/><col/></colgroup>
+<tr><th>VMSwitchBytesSec</th><th>VMSwitchPacketsSec</th></tr>
+<tr><td>0</td><td>0</td></tr>
+</table>
+<H3>Other</H3>
+<table>
+<colgroup><col/><col/><col/></colgroup>
+<tr><th>Uptime</th><th>TotalProcesses</th><th>PctFreeDisk</th></tr>
+<tr><td>11.11:00:02.0031834</td><td>439</td><td>55.0909134221807</td></tr>
+</table>
+<table>
+</table>
+<br><br><table class="footer"><tr><td>Report Run:</td><td>10/30/2021 5:46:18 PM</td></tr><tr><td>Author:</td><td>PROSPERO\Jeff</td></tr><tr><td>Script:</td><td>C:/Presentations/Techmentor2021/PS HTML Reports/demos/Get-VMHostStatusReport.ps1</td></tr><tr><td>ScriptVersion:</td><td>0.9.3</td></tr><tr><td>Source:</td><td>PROSPERO</td></tr></table>
+</body></html>
