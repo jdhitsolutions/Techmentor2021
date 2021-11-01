@@ -7,6 +7,8 @@ return "This is a walk-through demo file"
 
 Clear-Host
 
+#region Basics
+
 #add RSAT Active Directory
 # Add-WindowsCapability -name rsat.ActiveDirectory* -online
 Get-WindowsCapability -Name rsat.ActiveDirectory* -Online
@@ -15,6 +17,53 @@ Import-Module ActiveDirectory
 Get-Command -Module ActiveDirectory
 
 #READ THE HELP!!!
+
+#ask for what you want
+Get-ADuser Aprils
+Get-ADUser Aprils -Properties Title,Department,Description
+
+#discover
+#can only use a wildcard like this:
+Get-ADUser Aprils -Properties *
+
+Get-ADUser -filter * -SearchBase "OU=Employees,DC=company,DC=pri" -Properties Department,City -ov a | Group Department
+
+#SF Benefits department moving to Oakland and changing name
+$splat = @{
+ Name = "Oakland" 
+ Description = "Oakland Benefits" 
+ ManagedBy = (Get-ADUser artd) 
+ Path = "OU=Employees,DC=Company,DC=pri"
+ Passthru = $True
+}
+New-ADOrganizationalUnit @splat
+
+#get users
+$users = Get-ADUser -filter "Department -eq 'benefits' -AND City -eq 'San Francisco'" -Properties City,Department,Company
+$users | Select Distinguishedname,Name,City,Department,Company
+
+$users | Move-ADObject -TargetPath "OU=Oakland,OU=Employees,DC=Company,DC=pri" -PassThru |
+Set-ADuser -City Oakland -Department "Associates Assistance" -Company "Associated Benefits" 
+
+Get-ADuser -filter * -SearchBase "OU=Oakland,OU=Employees,DC=Company,DC=pri" -properties City,Department,Company |
+Select-Object DistinguishedName,Name,Department,City,Company
+
+<# 
+reset demo
+
+Get-ADuser -filter * -SearchBase "OU=Oakland,OU=Employees,DC=Company,DC=pri" |
+Move-ADObject -TargetPath "OU=Accounting,OU=Employees,DC=Company,DC=pri" -PassThru |
+Set-ADuser -City 'San Francisco' -Department "Benefits" -Company "Company.com" 
+
+
+Get-ADOrganizationalUnit -filter "Name -eq 'oakland'" |
+Set-ADOrganizationalUnit -ProtectedFromAccidentalDeletion $False -PassThru |
+Remove-ADObject -confirm:$False
+
+#>
+
+
+#endregion
 
 #region FSMO
 
