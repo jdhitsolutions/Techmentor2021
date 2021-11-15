@@ -9,7 +9,7 @@ start https://github.com/powershell/powershell
 # Microsoft Store
 start https://www.microsoft.com/store/productId/9MZ1SNWT0N5D
 
-# Winget
+# Winget https://github.com/microsoft/winget-cli
 winget search microsoft.powershell
 # PSReleaseTools
 Get-PSReleaseCurrent
@@ -113,7 +113,7 @@ Measure-Command {
 #get ssh working natively before using in PowerShell
 #this may not work in VSCode
 Enter-PSSession -HostName srv1 -UserName artd -SSHTransport
-Enter-pssession -HostName fred-company-com -UserName jeff -SSHTransport
+Enter-PSSession -HostName fred-company-com -UserName jeff -SSHTransport
 
 #endregion
 

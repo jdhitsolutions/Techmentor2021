@@ -24,7 +24,7 @@ Function Get-FolderSize {
     [cmdletbinding()]
     [alias("gfs")]
     Param(
-        [ValidateScript( { Test-Path $_ })]
+        [ValidateScript({ Test-Path $_ })]
         [string]$Path = "."
     )
 
@@ -45,15 +45,15 @@ Function Get-FolderSize {
     [cmdletbinding()]
     [alias("gfs")]
     Param(
-        [ValidateScript( {
-                if (Test-Path $_) {
-                    $True
-                }
-                else {
-                    Throw "Failed to validate the path $($_.toUpper())."
-                    $False
-                }
-            })]
+        [ValidateScript({
+            if (Test-Path $_) {
+                $True
+            }
+            else {
+                Throw "Failed to validate the path $($_.toUpper())."
+                $False
+            }
+        })]
         [string]$Path = "."
     )
 
@@ -80,19 +80,20 @@ cls
 #https://github.com/jdhitsolutions/ADReportingTools
 
 psedit c:\scripts\ADReportingTools\functions\get-adcanonicaluser.ps1
-Import-Module S:\ADReportingTools\ADReportingTools.psd1 -Force
+Import-Module c:\scripts\ADReportingTools\ADReportingTools.psd1 -Force
 #test the command in the domain
 $PSDefaultParameterValues
-
-Get-ADCanonicalUser company\artd -Server dom2 -Verbose
-Get-ADCanonicalUser company\foo.bar -Server dom2 -Verbose
+#run this in Windows PowerShell 5.1
+Get-ADCanonicalUser company\artd -Server dom1 -Verbose
+Get-ADCanonicalUser company\foo.bar -Server dom1 -Verbose
 
 $PSDefaultParameterValues
 
 #depending on your work, splatting PSBoundparameters might be easier
-psedit S:\ADReportingTools\functions\get-adsummary.ps1
+#see Line 42
+psedit C:\scripts\ADReportingTools\functions\get-adsummary.ps1
 
-Get-ADSummary -Server dom2 -Verbose
+Get-ADSummary -Server dom1 -Verbose
 Get-ADSummary -Server domFoo -Verbose
 
 cls
@@ -121,7 +122,8 @@ Register-ArgumentCompleter -CommandName Get-WinEvent -ParameterName Logname -Scr
     }
 }
 
-Get-WinEvent -LogName <tab
+#it may take a moment for autocomplete to populate
+Get-WinEvent -LogName <tab>
 
 #for a function
 psedit .\Get-ServiceStatus.ps1
@@ -255,7 +257,7 @@ cls
 dir c:\scripts\*.ps1 | Measure-Object -Property Length -Sum -ov m
 $m | Get-Member
 
-help Upda aq awte-TypeData
+help Update-TypeData
 
 $splat = @{
     TypeName   = "Microsoft.PowerShell.Commands.GenericMeasureInfo"
@@ -279,7 +281,9 @@ Add-PSTypeExtension -TypeName system.io.fileinfo -MemberType ScriptProperty -Mem
 
 Get-PSTypeExtension system.io.fileinfo
 
-dir c:\scripts -file | sort ModifiedAge | select -First 25 -Property Name, Size, ModifiedAge
+dir c:\scripts -file |
+sort ModifiedAge |
+select -First 25 -Property Name, Size, ModifiedAge
 
 # I incorporated into a module
 psedit c:\scripts\ADReportingTools\types\aduser.types.ps1xml
