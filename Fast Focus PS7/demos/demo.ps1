@@ -32,7 +32,7 @@ Get-Process &
 
 # range of characters
 'a'..'f'
-'a'..'f' | foreach { New-Item "c:\work\Demo-$_.txt" }
+'a'..'f' | foreach { New-Item "c:\work\Demo-$_.txt" -Force}
 
 #chain operators
 help about_Pipeline_Chain_Operators
@@ -47,7 +47,8 @@ Get-Service foo || Write-Warning "Can't find service"
 
 #PreditionSource and InlinePredictionColor
 Get-PSReadLineOption
-Set-PSReadLineOption -PredictionSource History -Colors @{InlinePrediction = "`e[4;93m" }
+Set-PSReadLineOption -PredictionSource History -Colors @{InlinePrediction = "`e[4;38;5;219m" }
+#chords may not conflict with VS Code
 Set-PSReadLineKeyHandler -Chord "ctrl+f" -Function ForwardWord
 
 #endregion
@@ -111,7 +112,7 @@ Measure-Command {
 
 #get ssh working natively before using in PowerShell
 #this may not work in VSCode
-enter-pssession -HostName srv1 -UserName artd -SSHTransport
+Enter-PSSession -HostName srv1 -UserName artd -SSHTransport
 Enter-pssession -HostName fred-company-com -UserName jeff -SSHTransport
 
 #endregion
@@ -121,18 +122,19 @@ Enter-pssession -HostName fred-company-com -UserName jeff -SSHTransport
 Get-Variable is*
 $PSEdition
 
-new-pssession -computername dom1 -credential company\artd
+New-PSSession -computername dom1 -credential company\artd
 #setting up SSHKeys makes this easier
-new-pssession -HostName srv1 -SSHTransport -UserName artd
-new-pssession -HostName srv2 -SSHTransport -UserName artd
+New-PSSession -HostName srv1 -SSHTransport -UserName artd
+New-PSSession -HostName srv2 -SSHTransport -UserName artd
 #Fedora host
-new-pssession -HostName fred-company-com -UserName jeff -SSHTransport
+New-PSSession -HostName fred-company-com -UserName jeff -SSHTransport
 
 Get-PSSession
 
 #be careful with aliases
 #Sort is not an alias in Linux
-invoke-command { Get-Process | Sort-Object WorkingSize | Select-Object -first 5} -session (Get-pssession)
+Invoke-Command { Get-Process | Sort-Object WorkingSize | Select-Object -first 5} -session (Get-pssession)
 
 #endregion
 
+# What else did you want to know?
