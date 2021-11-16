@@ -268,29 +268,38 @@ $splat = @{
 }
 Update-TypeData @splat
 
-dir C:\scripts -file | select Name, @{Name = "Size"; Expression = { $_.length } },
+dir c:\scripts\*.ps1 | measure-object -Property length -sum |
+Select-Object count,SumKB
+
+#another typical expression I might want to run often
+dir C:\scripts -file | Select-Object Name,
+@{Name = "Size"; Expression = { $_.length } },
 @{Name = "ModifiedAge"; Expression = { New-TimeSpan -Start $_.lastwritetime -End (Get-Date) } } |
-sort ModifiedAge -Descending | select -Last 10
+Sort-Object ModifiedAge -Descending |
+Select-Object -Last 10
 
 #install from the PSGallery
 Import-Module PSTypeExtensionTools
 Get-Command -Module PSTypeExtensionTools
 
+#add new type extensions to file object type
 Add-PSTypeExtension -TypeName system.io.fileinfo -MemberType AliasProperty -MemberName Size -Value Length
 Add-PSTypeExtension -TypeName system.io.fileinfo -MemberType ScriptProperty -MemberName ModifiedAge -Value { New-TimeSpan -Start $this.lastwritetime -End (Get-Date) }
 
 Get-PSTypeExtension system.io.fileinfo
 
+#this is much easier
 dir c:\scripts -file |
 sort ModifiedAge |
 select -First 25 -Property Name, Size, ModifiedAge
 
-# I incorporated into a module
+# I incorporated type extentsions into the ADReportingTools module
 psedit c:\scripts\ADReportingTools\types\aduser.types.ps1xml
 Import-Module ADReportingTools -Force
 
 Get-ADUser artd | Get-PSType | Get-PSTypeExtension
-Get-ADUser -Filter "department -eq 'sales'" | select DN, Firstname, Lastname
+Get-ADUser -Filter "department -eq 'sales'" |
+Select-Object DN, Firstname, Lastname
 
 # more reading -> https://jdhitsolutions.com/blog/powershell/8215/powershell-property-sets-to-the-rescue/
 
@@ -328,6 +337,7 @@ cls
 
 #create view for your module and custom objects
 dir c:\scripts\ADReportingTools\formats
+
 #here is a default view
 psedit c:\scripts\ADReportingTools\formats\adsummary.format.ps1xml
 
@@ -336,7 +346,7 @@ Get-ADSummary
 #use this from the PSScriptingTools module to discover defined views
 Get-FormatView system.diagnostics.process
 
-Get-Process | Format-Table view starttime
+Get-Process | Format-Table -view starttime
 
 #in my AD module
 Get-FormatView addomaincontrollerhealth
