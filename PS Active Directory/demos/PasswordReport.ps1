@@ -6,12 +6,17 @@
 [cmdletbinding()]
 Param(
     [Parameter(HelpMessage = "Specify the distinguished name of container like OU=Employees,DC=Company,DC=pri. The default is the entire domain.")]
+    [ValidateNotNullorEmpty()]
     [string]$SearchBase,
+
     [ValidateNotNullorEmpty()]
     [string]$ReportTitle = "Password Age Report",
+
     [ValidateNotNullorEmpty()]
     [string]$FilePath = "PasswordReport.html",
+
     [PSCredential]$Credential,
+
     [alias("dc")]
     [string]$Server
 )
@@ -25,6 +30,7 @@ $UserParams = @{
 }
 
 #this could be set from a parameter value, or derived using Get-ADDomain
+#my value is hard coded
 $pwParams = @{
     identity = "company.pri"
 }

@@ -92,7 +92,6 @@ Foreach ($DC in $DomainControllers) {
                     (Get-CimInstance -classname Win32_service -filter "Name='$Service'" -ComputerName $DC).State | Should Be 'Running'
                 }
             }
-
         } #services
 
         Context Disk {

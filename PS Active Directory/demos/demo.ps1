@@ -19,43 +19,43 @@ Get-Command -Module ActiveDirectory
 #READ THE HELP!!!
 
 #ask for what you want
-Get-ADuser Aprils
-Get-ADUser Aprils -Properties Title,Department,Description
+Get-ADUser Aprils
+Get-ADUser Aprils -Properties Title, Department, Description
 
 #discover
 #can only use a wildcard like this:
 Get-ADUser Aprils -Properties *
 
-Get-ADUser -filter * -SearchBase "OU=Employees,DC=company,DC=pri" -Properties Department,City -ov a | Group Department
+Get-ADUser -Filter * -SearchBase "OU=Employees,DC=company,DC=pri" -Properties Department, City -ov a |
+Group-Object -property Department
 
 #SF Benefits department moving to Oakland and changing name
 $splat = @{
- Name = "Oakland" 
- Description = "Oakland Benefits" 
- ManagedBy = (Get-ADUser artd) 
- Path = "OU=Employees,DC=Company,DC=pri"
- Passthru = $True
+   Name        = "Oakland"
+   Description = "Oakland Benefits"
+   ManagedBy   = (Get-ADUser artd)
+   Path        = "OU=Employees,DC=Company,DC=pri"
+   Passthru    = $True
 }
+
 New-ADOrganizationalUnit @splat
 
 #get users
-$users = Get-ADUser -filter "Department -eq 'benefits' -AND City -eq 'San Francisco'" -Properties City,Department,Company
-$users | Select Distinguishedname,Name,City,Department,Company
+$users = Get-ADUser -Filter "Department -eq 'benefits' -AND City -eq 'San Francisco'" -Properties City, Department, Company
+$users | Select-Object -property Distinguishedname, Name, City, Department, Company
 
 $users | Move-ADObject -TargetPath "OU=Oakland,OU=Employees,DC=Company,DC=pri" -PassThru |
-Set-ADuser -City Oakland -Department "Associates Assistance" -Company "Associated Benefits" 
+Set-ADUser -City Oakland -Department "Associates Assistance" -Company "Associated Benefits"
 
-Get-ADuser -filter * -SearchBase "OU=Oakland,OU=Employees,DC=Company,DC=pri" -properties City,Department,Company |
-Select-Object DistinguishedName,Name,Department,City,Company
+Get-ADUser -Filter * -SearchBase "OU=Oakland,OU=Employees,DC=Company,DC=pri" -Properties City, Department, Company |
+Select-Object -property DistinguishedName, Name, Department, City, Company
 
-<# 
+<#
 reset demo
 
 Get-ADuser -filter * -SearchBase "OU=Oakland,OU=Employees,DC=Company,DC=pri" |
 Move-ADObject -TargetPath "OU=Accounting,OU=Employees,DC=Company,DC=pri" -PassThru |
-Set-ADuser -City 'San Francisco' -Department "Benefits" -Company "Company.com" 
-
-
+Set-ADuser -City 'San Francisco' -Department "Benefits" -Company "Company.com"
 Get-ADOrganizationalUnit -filter "Name -eq 'oakland'" |
 Set-ADOrganizationalUnit -ProtectedFromAccidentalDeletion $False -PassThru |
 Remove-ADObject -confirm:$False
@@ -68,8 +68,7 @@ Remove-ADObject -confirm:$False
 #region FSMO
 
 Get-ADDomain
-Get-ADDomain | select-object *master, PDC*
-
+Get-ADDomain | Select-Object *master, PDC*
 Get-ADForest
 
 Function Get-FSMOHolder {
@@ -111,7 +110,7 @@ Function Get-FSMOHolder {
 } #end Get-FSMOHolders
 
 Get-FSMOHolder
-Get-FSMOHolder PDCEmulator, DomainNamingMaster
+Get-FSMOHolder -role PDCEmulator,DomainNamingMaster
 
 #endregion
 
@@ -121,9 +120,9 @@ Get-FSMOHolder PDCEmulator, DomainNamingMaster
 Get-PSDrive AD
 Get-ChildItem 'AD:\DC=Company,DC=Pri'
 
-Get-ADOrganizationalUnit -Filter * |
-ForEach-Object {
+Get-ADOrganizationalUnit -Filter * | ForEach-Object {
    $ouPath = Join-Path -Path "AD:\" -ChildPath $_.distinguishedName
+   #test if the OU has any children other than OUs
    $test = Get-ChildItem -Path $ouPath -Recurse |
    Where-Object ObjectClass -NE 'organizationalunit'
    if (-Not $Test) {
@@ -132,7 +131,7 @@ ForEach-Object {
 }
 
 #You could then decide to remove them,
-#but beware of protection from accidental deletio
+#but beware of protection from accidental deletion
 Set-ADOrganizationalUnit -Identity "OU=Y2kResources,DC=Company,DC=pri" -ProtectedFromAccidentalDeletion $False -PassThru |
 Remove-ADObject -WhatIf
 
@@ -157,12 +156,34 @@ $params = @{
    Enabled           = $True
 }
 
-If (-Not (Get-ADUser -Filter "samaccountname -eq '$($params.samaccountname)'")) {
+#test if user account already exists
+Function Test-ADUser {
+   [cmdletbinding()]
+   [Outputtype("boolean")]
+   Param(
+      [Parameter(Position = 0, Mandatory,HelpMessage = "Enter a user's SamAccountName")]
+      [ValidateNotNullOrEmpty()]
+      [string]$Identity,
+      [string]$Server,
+      [PSCredential]$Credential
+   )
+   Try {
+      [void](Get-ADUser @PSBoundParameters -ErrorAction Stop)
+      $True
+   }
+   Catch [Microsoft.ActiveDirectory.Management.ADIdentityNotFoundException] {
+      $False
+   }
+   Catch {
+      Throw $_
+   }
+}
+
+If (-Not (Test-ADUser $params.samaccountname)) {
    Write-Host "Creating new user $($params.name)" -foreground cyan
    #splat the hashtable
    New-ADUser @params
 }
-
 
 # remove-aduser -Identity tanderson
 
@@ -202,7 +223,9 @@ $paramHash = @{
    ResultSetSize   = "25"
 }
 
-Search-ADAccount @paramHash | Select-Object Name, LastLogonDate, SamAccountName, DistinguishedName
+Search-ADAccount @paramHash | 
+Select-Object Name, LastLogonDate, SamAccountName, DistinguishedName |
+Out-Gridview
 
 #endregion
 
@@ -238,7 +261,7 @@ $paramHash = @{
    SearchBase = "DC=company,DC=pri"
 }
 
-#formatting to make this nice to rea
+#formatting to make this nice to read
 Get-ADGroup @paramhash |
 Where-Object { $_.DistinguishedName -notmatch "CN=(Users)|(BuiltIn)" } |
 Sort-Object -Property GroupCategory |
@@ -286,10 +309,12 @@ psedit .\Get-ADNested.ps1
 . .\Get-ADNested.ps1
 
 $group = "Finance-and-Accounting"
-Get-ADNested $group | Select-Object Name, Level, ParentGroup, @{Name = "Top"; Expression = { $group } }
+Get-ADNested $group | Select-Object Name, Level, ParentGroup, 
+@{Name = "Top"; Expression = { $group } }
 
 #list all group members recursively
-Get-ADGroupMember -Identity $group -Recursive | Select-Object Distinguishedname, samAccountName
+Get-ADGroupMember -Identity $group -Recursive | 
+Select-Object Distinguishedname, samAccountName
 
 #endregion
 
@@ -304,25 +329,28 @@ psedit .\Get-ADMemberOf.ps1
 
 . .\Get-ADMemberOf.ps1
 
-$user | Get-ADMemberOf -verbose -ov m | Select-Object Name, DistinguishedName, GroupCategory -Unique
+$user | Get-ADMemberOf -verbose -ov m | 
+Select-Object Name, DistinguishedName, GroupCategory -Unique |
+Out-GridView
 
 #endregion
 
 #region Password Age Report
 
-#parameters for Get-ADUser
-$params = @{
-   filter     = "Enabled -eq 'true'"
-   Properties = "PasswordLastSet", "PasswordNeverExpires"
-}
-
 #get maximum password age.
 #This doesn't take fine tuned password policies into account
 $maxDays = (Get-ADDefaultDomainPasswordPolicy).MaxPasswordAge.Days
 
+#parameters for Get-ADUser
+#get enabled accounts with passwords that can expire
+$params = @{
+   filter     = "Enabled -eq 'true' -AND PasswordNeverExpires -eq 'false'"
+   Properties = "PasswordLastSet", "PasswordNeverExpires"
+}
+
 #skip user accounts under CN=Users and those with unexpired passwords
 Get-ADUser @params |
-Where-Object { -Not $_.PasswordExpired -and $_.DistinguishedName -notmatch "CN\=Users" } |
+Where-Object { (-Not $_.PasswordExpired) -and ($_.DistinguishedName -notmatch "CN\=Users") } |
 Select-Object DistinguishedName, Name, PasswordLastSet, PasswordNeverExpires,
 @{Name = "PasswordAge"; Expression = { (Get-Date) - $_.PasswordLastSet } },
 @{Name = "PassExpires"; Expression = { $_.passwordLastSet.addDays($maxDays) } } |
@@ -419,6 +447,5 @@ Open-ADReportingToolsHelp
 #run these in a PowerShell session to see ANSI
 Show-DomainTree
 Get-ADBranch "OU=IT,Ou=Employees,DC=Company,DC=pri"
-
 
 #endregion
