@@ -74,7 +74,7 @@ psedit $file
 
 #region parse html for conditional formatting
 
-$fragments = "<h2>$computername</h2>"
+$fragments = "<h1>$computername</h1>"
 $fragments += $data | ConvertTo-Html -Fragment
 
 #fragments is just text

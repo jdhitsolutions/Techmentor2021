@@ -11,8 +11,6 @@ this script.
 
 Usage:
 c:\scripts\SQLServerReport -computername CHI-SQL01 -includesystem -path c:\work\CHI-SQL01-DB.htm
-
-
 #>
 
 [cmdletbinding()]

@@ -69,7 +69,7 @@ for ($i = 1; $i -le $html.table.tr.count - 1; $i++) {
         $class.value = "danger"
         [void]$html.table.tr[$i].Attributes.Append($class)
     }
-    elseif (($html.table.tr[$i].td[-1] -as [int]) -le 30) {
+    elseif (($html.table.tr[$i].td[-1] -as [int]) -le 35) {
         $class.value = "warn"
         [void]$html.table.tr[$i].Attributes.Append($class)
     }
@@ -88,4 +88,4 @@ Out-File "$env:temp\drives.htm" -Encoding ascii
 Invoke-Item "$env:temp\drives.htm"
 
 #here's a sample from home that has the formatting
-Invoke-Item .\bovine320-drives.htm
+Invoke-Item .\samples\bovine320-drives.htm
